@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "spkmeans.h"
 
 int main(){
     printf("hello world!\n");
