@@ -7,7 +7,11 @@
 #include <math.h>
 
 /* globals */
-int n; // number of datapoints
+int N;          /* number of datapoints */
+int K;          /* number of clusters */
+int dp_size;    /* number of elements in each datapoint */
+double eps;     /* error of convergence */
+int iter;       /* number of iterations for convergence */
 
 /* typedefs and structs */
 
@@ -41,7 +45,7 @@ typedef struct{
  * @param initial_centroids array with the indexes of the initial centroids in datapoints
  * @return list of clusters
 */
-Cluster** kmeans_clustering(Datapoint datapoints[], long initial_centroids[]);
+Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[]);
 
 /**
  * Get the Weighted Adjacency Matrix for a set of datapoints
