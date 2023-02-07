@@ -3,21 +3,15 @@
 
 /* cluster operations */
 
-/**
- * Computes the euclidian distance between two datapoints
- * @param dp1 a datapoint
- * @param dp2 a datapoint
- * @return The distance between dp1 and dp2
-*/
-double euclidean_distance(Datapoint dp1, Datapoint dp2)
+double sq_distance(Datapoint dp1, Datapoint dp2)
 {
-    double sum_squares = 0;
     int i;
+    double sum_squares = 0;
     for(i = 0; i < dp_size; i++)
     {
         sum_squares += pow(dp1[i] - dp2[i], 2);
     }
-    return sqrt(sum_squares);
+    return sum_squares;
 }
 
 
@@ -26,7 +20,7 @@ double euclidean_distance(Datapoint dp1, Datapoint dp2)
 */
 double distance_from_prev(Cluster* cl)
 {
-    return euclidean_distance(cl->centroid, cl->prev);
+    return sqrt(sq_distance(cl->centroid, cl->prev));
 }
 
 
@@ -35,7 +29,7 @@ double distance_from_prev(Cluster* cl)
 */
 double distance_to_centroid(Datapoint dp, Cluster* cl)
 {
-    return euclidean_distance(dp, cl->centroid);
+    return sqrt(sq_distance(dp, cl->centroid));
 }
 
 
@@ -81,19 +75,6 @@ void remove_datapoint(Cluster* cl, DPNode* dp)
     }
     dp->next = NULL;
     dp->prev = NULL;
-}
-
-
-/**
- * Transfers a datapoint from the source cluster to the target cluster
- * @param source the source cluster
- * @param target the target cluster
- * @param dp the datapoint to transfer
-*/
-void transfer_datapoint(Cluster* source, Cluster* target, DPNode* dp)
-{
-    remove_datapoint(source, dp);
-    add_datapoint(target, dp);
 }
 
 
@@ -193,7 +174,6 @@ int convergence(Cluster* clusters[])
 Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
 {
     int i, j, iteration_number = 0;
-    int *datapoints_to_clusters = (int*)calloc(N, sizeof(int));
     Cluster **clusters = (Cluster**)calloc(K, sizeof(Cluster*));
 
     /* initialize centroids */
@@ -205,8 +185,9 @@ Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
         for(i = 0; i < N; ++i)
         {
             j = get_closest_cluster(clusters, datapoints[i]->value);
-            transfer_datapoint(clusters[datapoints_to_clusters[i]], clusters[j], datapoints[i]);
-            datapoints_to_clusters[i] = j;
+            remove_datapoint(clusters[datapoints[i]->cl_i], datapoints[i]);
+            add_datapoint(clusters[j], datapoints[i]);
+            datapoints[i]->cl_i = j;
         }
 
         /* update the centroids */ 
@@ -216,6 +197,5 @@ Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
         if((iteration_number++ >= iter) || convergence(clusters)){ break; }
     }
 
-    free(datapoints_to_clusters);
     return clusters;
 }

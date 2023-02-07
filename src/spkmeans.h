@@ -18,10 +18,11 @@ int iter;       /* number of iterations for convergence */
 typedef double* Datapoint;
 typedef Datapoint* Matrix;
 
-typedef struct dp_l{
+typedef struct dp_node{
     Datapoint value;
-    struct dp_l* next;
-    struct dp_l* prev;
+    struct dp_node* next;
+    struct dp_node* prev;
+    int cl_i;
 } DPNode;
 
 typedef struct{
@@ -87,7 +88,7 @@ Matrix squareMatrix();
  * @param dp2 a datapoint
  * @return the squared euclidian distance
 */
-double distance(Datapoint dp1, Datapoint dp2);
+double sq_distance(Datapoint dp1, Datapoint dp2);
 
 /**
  * Get the degree of a node in a graph
