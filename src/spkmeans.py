@@ -1,13 +1,20 @@
-import sys, numpy as np, pandas as pd
-import mykmeanssp
+import sys, numpy as np
+#import mykmeanssp
 
-global k, iter, eps, file_name_1, file_name_2, n
+global k, goal, file_name, dp_length, dp_count
 
 err_msg = "An Error Has Occurred"
 iter_err_msg = "Invalid maximum iteration!"
 k_err_msg = "Invalid number of clusters!"
 
+def read_args():
+    global k, goal, file_name
+    k_mentioned = sys.argv[1].isdigit()
+    k = int(sys.argv[1]) if k_mentioned else -1
+    goal = sys.argv[1+k_mentioned]
+    file_name = sys.argv[2+k_mentioned]
 
+"""
 def validate_args():
     if len(sys.argv) != 5 and len(sys.argv) != 6:
         print(err_msg)
@@ -39,25 +46,30 @@ def validate_args():
         print(err_msg)
         return False
     return True
+"""
 
 
 def read_datapoints():
-    global n
-    dp1 = pd.read_csv(file_name_1, sep=',', header=None)
-    dp2 = pd.read_csv(file_name_2, sep=',', header=None)
-    datapoint_size = len(dp1.columns) - 1
-    dp1.columns = ["key"] + [str(i) for i in range(datapoint_size)]
-    dp2.columns = ["key"] + [str(i) for i in range(datapoint_size)]
-    dp = dp1.merge(dp2, on="key", how="inner").sort_values(by="key")
-    n = len(dp)
-    return dp
+    global dp_length, dp_count
+    with open(file_name) as file:
+        datapoints = [line.split(',') for line in file.readlines()]
+    dp_length = len(datapoints[0])
+    dp_count =  len(datapoints)
+    return datapoints
 
+def read_matrix():
+    global dp_count
+    with open(file_name) as file:
+        rows = [line.split(',') for line in file.readlines()]
+    dp_count = len(rows)
+    return rows
 
 def distance(dp1, dp2):
     return sum([(a - b)**2 for a, b in np.column_stack((dp1, dp2))]) ** 0.5
 
 
-def kmeans_pp_algorithm(dp_np: np.ndarray, n, k):
+def kmeans_pp_algorithm(datapoints, n, k):
+    dp_np = datapoints.to_numpy()
     np.random.seed(0)
     centroids = []
     distances = [-1 for i in range(n)]
@@ -73,7 +85,43 @@ def kmeans_pp_algorithm(dp_np: np.ndarray, n, k):
     return centroids
 
 
+def eigengap(eigenvals):
+    sorted_vals = sorted(eigenvals)
+    return max([sorted_vals[i+1]-sorted_vals[i] for i in range(len(sorted_vals)-1)])
+
+
+
+def print_matrix(rows):
+    for row in rows:
+        print(','.join(row))
+
+
 def main():
+    read_args()
+    if goal == "jacobi":
+        eigenvals, eigenvecs = mykmeansmodule.jacobi(read_matrix(), dp_count)
+        print(','.join(eigenvals))
+        print_matrix(eigenvecs)
+    else:
+        datapoints = read_datapoints()
+        if goal == "spk":
+            gl = mykmeansmodule.gl(datapoints, dp_length)
+            eigenvals, eigenvecs = mykmeansmodule.jacobi(gl, dp_count)
+            if k == -1:
+                k = eigengap(eigenvals)
+            eigendatapoints = [[eigenvecs[j][i] for j in range(k)] for i in range(dp_count)]
+            initial_centroids = kmeans_pp_algorithm(eigendatapoints)
+            print(initial_centroids)
+            centroids = mykmeansmodule.spk(eigendatapoints, initial_centroids)
+            print_matrix(centroids)
+        if goal == "wam":
+            print_matrix(mykmeansmodule.wam(datapoints, dp_length))
+        if goal == "ddg":
+            print_matrix(mykmeansmodule.ddg(datapoints, dp_length))
+        if goal == "gl":
+            print_matrix(mykmeansmodule.gl(datapoints, dp_length))
+
+    """
     if not validate_args():
         exit()
     datapoints = read_datapoints()
@@ -87,6 +135,7 @@ def main():
     final_centroids = mykmeanssp.fit(datapoints_list, initial_centroids, len(datapoints.columns)-1, iter, eps)
     for p in final_centroids:
         print_items(p, lambda x: '{:.4f}'.format(x))
+    """
 
 
 if __name__ == '__main__':

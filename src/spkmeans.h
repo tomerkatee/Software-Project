@@ -119,4 +119,12 @@ Matrix matMultiplication(Matrix A, Matrix B);
 */
 double off(Matrix A);
 
+/**
+ * Prints a matrix's rows. The values of each row are separated by commas
+ * @param A a matrix
+*/
+void print_matrix(Matrix A);
+
+
+
 #endif
