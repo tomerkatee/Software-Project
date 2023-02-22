@@ -92,11 +92,11 @@ double sq_distance(Datapoint dp1, Datapoint dp2);
 
 /**
  * Get the degree of a node in a graph
- * @param A an adjacency matrix
+ * @param W a weighted adjacency matrix
  * @param i index of a node
  * @return the degree of i in A
 */
-double degree(Matrix A, int i);
+double degree(Matrix W, int i);
 
 /**
  * Builds a rotation matrix
@@ -125,6 +125,27 @@ double off(Matrix A);
 */
 void print_matrix(Matrix A);
 
+/**
+ * Reads the datapoints from a file into a Datapoint array
+ * @param file_name .txt input file name that contains the datapoints
+ * @return array of datapoints from the lines in the file
+*/
+Datapoint* read_datapoints(char* file_name);
+
+/**
+ * Allocates memory with calloc() and terminates the program if unsuccessful
+ * @param nitems number of blocks to allocate
+ * @param size size of each block
+*/
+void *calloc_and_check(size_t nitems, size_t size);
+
+/**
+ * Clusters the datapoints by the kmeans algorithm
+ * @param datapoints the datapoints to cluster
+ * @param initial_centroids array with the indexes of the initial centroids in datapoints
+ * @return array of the clusters created
+*/
+Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[]);
 
 
 #endif
