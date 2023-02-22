@@ -14,40 +14,6 @@ def read_args():
     goal = sys.argv[1+k_mentioned]
     file_name = sys.argv[2+k_mentioned]
 
-"""
-def validate_args():
-    if len(sys.argv) != 5 and len(sys.argv) != 6:
-        print(err_msg)
-        return False
-    global k, iter, eps, file_name_1, file_name_2
-    k = sys.argv[1]
-    offset_iter_mentioned = 1 if len(sys.argv) == 6 else 0
-    iter = sys.argv[2] if offset_iter_mentioned else 300
-    eps = sys.argv[2 + offset_iter_mentioned]
-    file_name_1 = sys.argv[3 + offset_iter_mentioned]
-    file_name_2 = sys.argv[4 + offset_iter_mentioned]
-
-    if offset_iter_mentioned and not iter.isdigit():
-        print(iter_err_msg)
-        return False
-    else:
-        iter = int(iter)
-        if not 1 < iter < 1000:
-            print(iter_err_msg)
-            return False
-    if k.isdigit():
-        k = int(k)
-    else:
-        print(k_err_msg)
-        return False
-    if eps.replace('.', '', 1).isdigit():
-        eps = float(eps)
-    else:
-        print(err_msg)
-        return False
-    return True
-"""
-
 
 def read_datapoints():
     global dp_length, dp_count
@@ -57,12 +23,14 @@ def read_datapoints():
     dp_count =  len(datapoints)
     return datapoints
 
+
 def read_matrix():
     global dp_count
     with open(file_name) as file:
         rows = [line.split(',') for line in file.readlines()]
     dp_count = len(rows)
     return rows
+
 
 def distance(dp1, dp2):
     return sum([(a - b)**2 for a, b in np.column_stack((dp1, dp2))]) ** 0.5
@@ -88,7 +56,6 @@ def kmeans_pp_algorithm(datapoints, n, k):
 def eigengap(eigenvals):
     sorted_vals = sorted(eigenvals)
     return max([sorted_vals[i+1]-sorted_vals[i] for i in range(len(sorted_vals)-1)])
-
 
 
 def print_matrix(rows):
@@ -120,22 +87,6 @@ def main():
             print_matrix(mykmeansmodule.ddg(datapoints, dp_length))
         if goal == "gl":
             print_matrix(mykmeansmodule.gl(datapoints, dp_length))
-
-    """
-    if not validate_args():
-        exit()
-    datapoints = read_datapoints()
-    if not 1 < k < n:
-        print(k_err_msg)
-        exit()
-    print_items = lambda l, f: print(','.join(map(f, l)))
-    initial_centroids = kmeans_pp_algorithm(datapoints.to_numpy(copy=True), n, k)
-    print_items(initial_centroids, str)
-    datapoints_list = datapoints.to_numpy()[:, 1:].tolist()
-    final_centroids = mykmeanssp.fit(datapoints_list, initial_centroids, len(datapoints.columns)-1, iter, eps)
-    for p in final_centroids:
-        print_items(p, lambda x: '{:.4f}'.format(x))
-    """
 
 
 if __name__ == '__main__':
