@@ -1,10 +1,6 @@
 #include "spkmeans.h"
 #include <string.h>
 
-/* globals */
-int N, dp_len;
-
-
 void *calloc_and_check(size_t nitems, size_t size)
 {
     void *p = calloc(nitems, size);
@@ -32,7 +28,7 @@ int get_dp_len(char *line)
 
 Datapoint read_line_to_vector(char* line)
 {
-    Datapoint dp = (Datapoint)calloc_and_check(dp_len, sizeof(double));
+    Datapoint dp = (Datapoint)calloc_and_check(dp_size, sizeof(double));
     char* c = line;
     char buffer[64];
     int dp_index = 0;
@@ -53,6 +49,7 @@ Datapoint read_line_to_vector(char* line)
     return dp;
 }
 
+
 Datapoint* read_datapoints(char* file_name)
 {
     FILE *file;
@@ -62,13 +59,13 @@ Datapoint* read_datapoints(char* file_name)
     DPNode *head, *p, *tmp, *new;
     Datapoint dp;
     Datapoint* datapoints;
-    int first = 1, i, dp_len = 0;
+    int first = 1, i;
     N = 0;
     while(getline(&line, &len, stdin) != -1)
     {
         if(first) 
         {
-            dp_len = get_dp_len(line);
+            dp_size = get_dp_len(line);
         }
         dp = read_line_to_vector(line);
         new = (DPNode*)calloc_and_check(1, sizeof(DPNode));
@@ -110,23 +107,21 @@ int main(int argc, char* argv[]){
     Matrix m;
     if(!strcmp(goal, "jacobi"))
     {
-        m = read_datapoints(file_name);
+        print_matrix(read_datapoints(file_name));
     }
     else
     {
         Datapoint* datapoints = read_datapoints(file_name);
-        m = wam(datapoints);
         if(!strcmp(goal, "wam")){
-            print_matrix(m);
-            return 0;
+            print_matrix(wam(datapoints));
         }
-        m = ddg(datapoints); 
-        if(!strcmp(goal, "ddg")){
-            print_matrix(m);
-            return 0;
+        else if(!strcmp(goal, "ddg")){
+            print_matrix(ddg(datapoints));
         }
-        m = gl(datapoints);
-        print_matrix(gl);
+        else
+        {
+            print_matrix(gl(datapoints));
+        } 
     }
     return 0;
 }
