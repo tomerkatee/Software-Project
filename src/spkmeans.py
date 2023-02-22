@@ -1,5 +1,5 @@
 import sys, numpy as np
-import mykmeanssp
+#import mykmeanssp
 
 global k, goal, file_name
 
@@ -9,6 +9,7 @@ def read_args():
     k = int(sys.argv[1]) if k_mentioned else -1
     goal = sys.argv[1+k_mentioned]
     file_name = sys.argv[2+k_mentioned]
+
 
 
 def distance(dp1, dp2):
@@ -35,7 +36,6 @@ def kmeans_pp_algorithm(datapoints, n, k):
 def eigengap(eigenvals):
     sorted_vals = sorted(eigenvals)
     return max([sorted_vals[i+1]-sorted_vals[i] for i in range(len(sorted_vals)-1)])
-
 
 
 def print_matrix(rows):
