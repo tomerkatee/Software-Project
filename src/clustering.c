@@ -3,35 +3,21 @@
 
 /* cluster operations */
 
-double sq_distance(Datapoint dp1, Datapoint dp2)
-{
-    int i;
-    double sum_squares = 0;
-    for(i = 0; i < dp_size; i++)
-    {
-        sum_squares += pow(dp1[i] - dp2[i], 2);
-    }
-    return sum_squares;
-}
-
-
 /**
  * @return The distance from a cluster's centroid to its previous value
 */
 double distance_from_prev(Cluster* cl)
 {
-    return sqrt(sq_distance(cl->centroid, cl->prev));
+    return euclidian_distance(cl->centroid, cl->prev);
 }
-
 
 /**
  * @return The distance from a cluster's centroid to a datapoint
 */
 double distance_to_centroid(Datapoint dp, Cluster* cl)
 {
-    return sqrt(sq_distance(dp, cl->centroid));
+    return euclidian_distance(dp, cl->centroid);
 }
-
 
 /**
  * Adds a datapoint to a cluster, assuming it isn't there
@@ -77,7 +63,6 @@ void remove_datapoint(Cluster* cl, DPNode* dp)
     dp->prev = NULL;
 }
 
-
 /**
  * Updates a cluster's cenroid and prev fields
  * @param cl a cluster to update
@@ -104,7 +89,6 @@ void update_cluster(Cluster* cl)
         dp = dp->next;
     }
 }
-
 
 /**
  * Initializes a cluster from a datapoint
@@ -151,7 +135,6 @@ int get_closest_cluster(Cluster* clusters[], Datapoint dp)
     return j;
 }
 
-
 /**
  * returns whether all centroid changes are less than epsilon
  * @param clusters a list of clusters
@@ -169,7 +152,6 @@ int convergence(Cluster* clusters[])
     }
     return 1;
 }
-
 
 Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
 {

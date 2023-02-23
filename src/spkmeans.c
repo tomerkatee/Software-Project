@@ -1,16 +1,5 @@
 #include "spkmeans.h"
-#include <string.h>
 
-void *calloc_and_check(size_t nitems, size_t size)
-{
-    void *p = calloc(nitems, size);
-    if(p == NULL)
-    {
-        printf("An Error Has Occurred!\n");
-        exit(1);
-    }
-    return p;
-}
 
 int get_dp_len(char *line)
 {
@@ -24,7 +13,6 @@ int get_dp_len(char *line)
     } 
     return len;
 }
-
 
 Datapoint read_line_to_vector(char* line)
 {
@@ -49,18 +37,19 @@ Datapoint read_line_to_vector(char* line)
     return dp;
 }
 
-
 Datapoint* read_datapoints(char* file_name)
 {
     FILE *file;
-    file = fopen(file_name, "r");
+    char* line;
     long unsigned len = 10;
-    char *line = (char*)calloc_and_check(len, sizeof(char));
     DPNode *head, *p, *tmp, *new;
     Datapoint dp;
     Datapoint* datapoints;
     int first = 1, i;
     N = 0;
+
+    file = fopen(file_name, "r");
+    line = (char*)calloc_and_check(len, sizeof(char));
     while(getline(&line, &len, stdin) != -1)
     {
         if(first) 
@@ -90,7 +79,7 @@ Datapoint* read_datapoints(char* file_name)
     datapoints = (Datapoint*)calloc_and_check(N, sizeof(Datapoint));
     for (i = 0; i < N; i++)
     {
-        datapoints[i] = head;
+        datapoints[i] = head->value;
         tmp = head;
         head = head->next;
         tmp->next = NULL;
@@ -101,10 +90,20 @@ Datapoint* read_datapoints(char* file_name)
 
 }
 
-
 int main(int argc, char* argv[]){
-    char* goal = argv[1], file_name = argv[2];
-    Matrix m;
+    char *goal, *file_name;
+
+    if(argc == 1)
+    {
+        goal = "wam";
+        file_name = "..\\tests\\input1.txt";
+    }
+    else
+    {
+        goal = argv[1];
+        file_name = argv[2];
+    }
+
     if(!strcmp(goal, "jacobi"))
     {
         print_matrix(read_datapoints(file_name));
@@ -125,4 +124,3 @@ int main(int argc, char* argv[]){
     }
     return 0;
 }
-

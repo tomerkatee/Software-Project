@@ -2,16 +2,18 @@
 #define SPKMEANS_H
 
 /* includes */
+#define  _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 /* globals */
-int N;          /* number of datapoints */
-int K;          /* number of clusters */
-int dp_size;    /* number of elements in each datapoint */
-double eps;     /* error of convergence */
-int iter;       /* number of iterations for convergence */
+extern int N;          /* number of datapoints */
+extern int K;          /* number of clusters */
+extern int dp_size;    /* number of elements in each datapoint */
+extern double eps;     /* error of convergence */
+extern int iter;       /* number of iterations for convergence */
 
 /* typedefs and structs */
 
@@ -89,6 +91,14 @@ Matrix squareMatrix();
  * @return the squared euclidian distance
 */
 double sq_distance(Datapoint dp1, Datapoint dp2);
+
+/**
+ * Get the euclidian distance of two datapoints
+ * @param dp1 a datapoint
+ * @param dp2 a datapoint
+ * @return the euclidian distance
+*/
+double euclidian_distance(Datapoint dp1, Datapoint dp2);
 
 /**
  * Get the degree of a node in a graph

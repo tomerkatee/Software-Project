@@ -1,10 +1,30 @@
 #include "spkmeans.h"
 
+/* globals */
+ int N;          /* number of datapoints */
+ int K;          /* number of clusters */
+ int dp_size;    /* number of elements in each datapoint */
+ double eps;     /* error of convergence */
+ int iter;       /* number of iterations for convergence */
+
+/* matrix operations */
+
+void *calloc_and_check(size_t nitems, size_t size)
+{
+    void *p = calloc(nitems, size);
+    if(p == NULL)
+    {
+        printf("An Error Has Occurred!\n");
+        exit(1);
+    }
+    return p;
+}
+
 double sq_distance(Datapoint dp1, Datapoint dp2)
 {
     int i;
     double sum = 0;
-    for (int i = 0; i < K; i++)
+    for (i = 0; i < K; i++)
     {
         sum += pow(dp1[i] - dp2[i], 2);
     }
@@ -12,15 +32,17 @@ double sq_distance(Datapoint dp1, Datapoint dp2)
     
 }
 
-/* matrix operations */
-
-
+double euclidian_distance(Datapoint dp1, Datapoint dp2)
+{
+    return sqrt(sq_distance(dp1, dp2));
+}
 
 Matrix wam_ddg_gl(Datapoint datapoints[], int ddg_gl)
 {
     Matrix W;
-    W = ddg_gl ? wam(datapoints) : squareMatrix();
     int i, j, diag;
+
+    W = ddg_gl ? wam(datapoints) : squareMatrix();
     for (i = 0; i < N; i++)
     {
         diag = ddg_gl ? degree(W, i) : 0;
@@ -51,7 +73,6 @@ Matrix gl(Datapoint datapoints[])
 }
 
 Matrix squareMatrix(){
-    Datapoint row;
     int i;
     Matrix m;
     m = (Matrix)calloc_and_check(N, sizeof(Datapoint));
@@ -100,11 +121,9 @@ void print_matrix(Matrix A)
     {
         for(j = 0; j < N - 1; j++)
         {
-            printf("%.4lf,", A[i][j]);
+            printf("%.4f,", A[i][j]);
         }
-        printf("%.4lf\n", A[i][j]);
+        printf("%.4f\n", A[i][j]);
     }
     
 }
-
-
