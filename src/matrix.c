@@ -1,11 +1,7 @@
 #include "spkmeans.h"
 
-/* globals */
- int N;          /* number of datapoints */
- int K;          /* number of clusters */
- int dp_size;    /* number of elements in each datapoint */
- double eps;     /* error of convergence */
- int iter;       /* number of iterations for convergence */
+ int N, K, dp_size, iter;
+ double eps;
 
 /* matrix operations */
 

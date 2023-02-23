@@ -14,6 +14,7 @@ extern int K;          /* number of clusters */
 extern int dp_size;    /* number of elements in each datapoint */
 extern double eps;     /* error of convergence */
 extern int iter;       /* number of iterations for convergence */
+/* actual declaration in matrix.c */
 
 /* typedefs and structs */
 

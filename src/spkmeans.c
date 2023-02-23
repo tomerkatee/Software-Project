@@ -37,57 +37,39 @@ Datapoint read_line_to_vector(char* line)
     return dp;
 }
 
+int count_lines(FILE* fp)
+{
+    int cnt = 0;
+    char c;
+    for (c = getc(fp); c != EOF; c = getc(fp))
+        if (c == '\n')
+            cnt++;
+    return cnt;
+}
+
 Datapoint* read_datapoints(char* file_name)
 {
     FILE *file;
     char* line;
-    long unsigned len = 10;
-    DPNode *head, *p, *tmp, *new;
-    Datapoint dp;
+    long unsigned len = 64;
     Datapoint* datapoints;
-    int first = 1, i;
-    N = 0;
+    int i = 1;
 
     file = fopen(file_name, "r");
+    N = count_lines(fopen(file_name, "r"));
     line = (char*)calloc_and_check(len, sizeof(char));
-    while(getline(&line, &len, stdin) != -1)
-    {
-        if(first) 
-        {
-            dp_size = get_dp_len(line);
-        }
-        dp = read_line_to_vector(line);
-        new = (DPNode*)calloc_and_check(1, sizeof(DPNode));
-        if(first)
-        {
-            head = new;
-            p = head;
-        }
-        else
-        {
-            p->next = new;
-            p = p->next;
-        }
-        p->next = NULL;
-        p->value = dp;
-        N++;
-        first = 0;
-    }
-    fclose(file);
-    
-    free(line);
     datapoints = (Datapoint*)calloc_and_check(N, sizeof(Datapoint));
-    for (i = 0; i < N; i++)
+    getline(&line, &len, file);
+    dp_size = get_dp_len(line);
+    datapoints[0] = read_line_to_vector(line);
+    while(getline(&line, &len, file) != -1)
     {
-        datapoints[i] = head->value;
-        tmp = head;
-        head = head->next;
-        tmp->next = NULL;
-        tmp->prev = NULL;
+        datapoints[i++] = read_line_to_vector(line);
     }
 
+    fclose(file);
+    free(line);
     return datapoints;
-
 }
 
 int main(int argc, char* argv[]){
@@ -96,13 +78,15 @@ int main(int argc, char* argv[]){
     if(argc == 1)
     {
         goal = "wam";
-        file_name = "..\\tests\\input1.txt";
+        file_name = "input_1.txt";
     }
     else
     {
         goal = argv[1];
         file_name = argv[2];
     }
+    print_matrix(wam(read_datapoints(file_name)));
+    return 0;
 
     if(!strcmp(goal, "jacobi"))
     {
