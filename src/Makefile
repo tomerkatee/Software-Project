@@ -1,7 +1,7 @@
 FLAGS = -ansi -Wall -Wextra -Werror -pedantic-errors
 
 spkmeans: spkmeans.o clustering.o jacobi.o matrix.o
-	gcc -o spkmeans spkmeans.o clustering.o jacobi.o matrix.o -lm
+	gcc spkmeans.o clustering.o jacobi.o matrix.o -lm -o spkmeans
 
 spkmeans.o: spkmeans.c spkmeans.h
 	gcc -c $(FLAGS) spkmeans.c

@@ -74,6 +74,38 @@ Datapoint* read_datapoints(char* file_name)
 
 int main(int argc, char* argv[]){
     char *goal, *file_name;
+    /*
+    int i, j;
+    Cluster** cls;
+    Datapoint* dps;
+    DPNode* nodes[5000];
+    long init[] = {2732,2975,4236,4294,4251,3087,1904,1476,304,1373,2389,4066,2406,1977,4221};
+    DPNode* node;
+    dps = read_datapoints("input_3.txt");
+    for(i = 0; i < N; i++)
+    {
+        node = (DPNode*)malloc(sizeof(DPNode));
+        node->value = dps[i];
+        node->next = NULL;
+        node->prev = NULL;
+        node->cl_i = 0;
+        nodes[i] = node;
+    }
+    K = 15;
+    eps = 0;
+    iter = 750;
+    cls = kmeans_clustering(nodes, init);
+    for(i = 0; i < K; i++)
+    {
+        for(j = 0; j < dp_size-1; j++)
+        {
+            printf("%.4f,", cls[i]->centroid[j]);
+        }
+        printf("%.4f\n", cls[i]->centroid[dp_size-1]);
+    }
+
+    return 0;
+    */
 
     if(argc == 1)
     {
@@ -85,9 +117,6 @@ int main(int argc, char* argv[]){
         goal = argv[1];
         file_name = argv[2];
     }
-    print_matrix(wam(read_datapoints(file_name)));
-    return 0;
-
     if(!strcmp(goal, "jacobi"))
     {
         print_matrix(read_datapoints(file_name));

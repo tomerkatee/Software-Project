@@ -4,22 +4,6 @@
 /* cluster operations */
 
 /**
- * @return The distance from a cluster's centroid to its previous value
-*/
-double distance_from_prev(Cluster* cl)
-{
-    return euclidian_distance(cl->centroid, cl->prev);
-}
-
-/**
- * @return The distance from a cluster's centroid to a datapoint
-*/
-double distance_to_centroid(Datapoint dp, Cluster* cl)
-{
-    return euclidian_distance(dp, cl->centroid);
-}
-
-/**
  * Adds a datapoint to a cluster, assuming it isn't there
  * @param cl a cluster
  * @param dp a datapoint node
@@ -122,10 +106,10 @@ Cluster* init_cluster(DPNode* dp)
 int get_closest_cluster(Cluster* clusters[], Datapoint dp)
 {
     int j = 0, i = 1;
-    double distance = distance_to_centroid(dp, clusters[j]), min_distance = distance;
+    double distance = euclidian_distance(dp, clusters[j]->centroid), min_distance = distance;
     for(; i < K; ++i)
     {
-        distance = distance_to_centroid(dp, clusters[i]);
+        distance = euclidian_distance(dp, clusters[i]->centroid);
         if(distance < min_distance)
         {
             min_distance = distance;
@@ -145,7 +129,7 @@ int convergence(Cluster* clusters[])
     int i = 0;
     for(; i < K; ++i)
     {
-        if(distance_from_prev(clusters[i]) >= eps)
+        if(euclidian_distance(clusters[i]->centroid, clusters[i]->prev) >= eps)
         {
             return 0;
         }
