@@ -75,9 +75,23 @@ Datapoint* read_datapoints(char* file_name)
 int main(int argc, char* argv[]){
     char *goal, *file_name;
 
+    double dp1[] = {0.0, 1.0, 1.0}, dp2[] = {1.0, 0.0, 1.0}, dp3[] = {1.0, 1.0, 0.0};
+    Datapoint A[3];
+    Diagonalization* diag;
+    A[0] = dp1;
+    A[1] = dp2;
+    A[2] = dp3;
+    N = 3;
+    eps = 0;
+    iter = 100;
+    diag = jacobi(A);
+    printf("%.4f, %.4f, %.4f\n\n", diag->eigenvalues[0], diag->eigenvalues[1], diag->eigenvalues[2]);
+    print_matrix(diag->eigenvectors);
+    return 0;
+
     if(argc == 1)
     {
-        goal = "wam";
+        goal = "jacobi";
         file_name = "input_1.txt";
     }
     else

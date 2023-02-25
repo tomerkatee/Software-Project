@@ -96,13 +96,12 @@ Matrix transform(Matrix A, Diagonalization* diag)
 {
     int r, k;
     double t, c, s;
-    Matrix P, A_tag = squareMatrix();
+    Matrix A_tag = squareMatrix();
 
     t = obtain_t(A);
     c = 1 / root_operation(t);
     s = t * c;
-    P = rotationMatrix(piv_i, piv_j, c, s);
-    diag->eigenvectors = matMultiplication(diag->eigenvectors, P);
+    diag->eigenvectors = matMultiplication(diag->eigenvectors, rotationMatrix(piv_i, piv_j, c, s));
 
     for(r = 0; r < N; r++)
     {
@@ -116,7 +115,6 @@ Matrix transform(Matrix A, Diagonalization* diag)
     A_tag[piv_j][piv_j] = s * s * A[piv_i][piv_i] + c * c * A[piv_j][piv_j] + 2 * s * c * A[piv_i][piv_j];
     A_tag[piv_i][piv_j] = 0;
     
-    free_matrix(A);
     return A_tag;
 }
 
@@ -136,5 +134,6 @@ Diagonalization* jacobi(Matrix A)
     }
 
     diag->eigenvalues = diagonal(A);
+    free_matrix(A);
     return diag;
 }
