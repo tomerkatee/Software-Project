@@ -77,7 +77,7 @@ Matrix gl(Datapoint datapoints[]);
  * @param A a real symmetric full rank matrix
  * @return all the eigenvectors and eigenvalues of the matrix
 */
-Diagonalization* jacobi(Matrix A);
+Diagonalization jacobi(Matrix A);
 
 /**
  * Initialize a square matrix
@@ -135,6 +135,13 @@ double off(Matrix A);
  * @param A a matrix
 */
 void print_matrix(Matrix A);
+
+/**
+ * Prints a datapoint's values separated by commas
+ * @param dp a datapoint
+ * @param size the datapoint's size
+*/
+void print_datapoint(Datapoint dp, int size);
 
 /**
  * Reads the datapoints from a file into a Datapoint array

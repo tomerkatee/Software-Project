@@ -51,12 +51,14 @@ Datapoint* read_datapoints(char* file_name)
 {
     FILE *file;
     char* line;
-    long unsigned len = 64;
+    size_t len = 64;
     Datapoint* datapoints;
     int i = 1;
 
     file = fopen(file_name, "r");
-    N = count_lines(fopen(file_name, "r"));
+    N = count_lines(file);
+    /* reset the file caret to read the lines again */
+    fseek(file, 0, SEEK_SET);
     line = (char*)calloc_and_check(len, sizeof(char));
     datapoints = (Datapoint*)calloc_and_check(N, sizeof(Datapoint));
     getline(&line, &len, file);
@@ -73,7 +75,6 @@ Datapoint* read_datapoints(char* file_name)
 }
 
 int main(int argc, char* argv[]){
-    char *goal, *file_name;
     /*
     int i, j;
     Cluster** cls;
@@ -106,34 +107,29 @@ int main(int argc, char* argv[]){
 
     return 0;
     */
+   
+    Diagonalization diagonlization;
+    Datapoint* datapoints;
+    char *goal, *file_name;
+    int i;
 
-    if(argc == 1)
-    {
-        goal = "wam";
-        file_name = "input_1.txt";
-    }
-    else
-    {
-        goal = argv[1];
-        file_name = argv[2];
-    }
+    goal = argv[1];
+    file_name = argv[2];
+    datapoints = read_datapoints(file_name);
     if(!strcmp(goal, "jacobi"))
     {
-        print_matrix(read_datapoints(file_name));
-    }
-    else
-    {
-        Datapoint* datapoints = read_datapoints(file_name);
-        if(!strcmp(goal, "wam")){
-            print_matrix(wam(datapoints));
-        }
-        else if(!strcmp(goal, "ddg")){
-            print_matrix(ddg(datapoints));
-        }
-        else
+        diagonlization = jacobi(datapoints);
+        print_datapoint(diagonlization.eigenvalues, K);
+        for (i = 0; i < K; i++)
         {
-            print_matrix(gl(datapoints));
-        } 
+            print_datapoint(diagonlization.eigenvectors[i], N);
+        }
     }
+    if(!strcmp(goal, "wam"))
+        print_matrix(wam(datapoints));
+    else if(!strcmp(goal, "ddg"))
+        print_matrix(ddg(datapoints));
+    else
+        print_matrix(gl(datapoints));
     return 0;
 }

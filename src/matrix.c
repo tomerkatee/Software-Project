@@ -1,7 +1,7 @@
 #include "spkmeans.h"
 
- int N, K, dp_size, iter;
- double eps;
+int N, K, dp_size, iter;
+double eps;
 
 /* matrix operations */
 
@@ -20,7 +20,7 @@ double sq_distance(Datapoint dp1, Datapoint dp2)
 {
     int i;
     double sum = 0;
-    for (i = 0; i < K; i++)
+    for (i = 0; i < dp_size; i++)
     {
         sum += pow(dp1[i] - dp2[i], 2);
     }
@@ -36,8 +36,8 @@ double euclidian_distance(Datapoint dp1, Datapoint dp2)
 Matrix wam_ddg_gl(Datapoint datapoints[], int ddg_gl)
 {
     Matrix W;
-    int i, j, diag;
-
+    int i, j;
+    double diag;
     W = ddg_gl ? wam(datapoints) : squareMatrix();
     for (i = 0; i < N; i++)
     {
@@ -112,14 +112,20 @@ Matrix matMultiplication(Matrix A, Matrix B)
 
 void print_matrix(Matrix A)
 {
-    int i, j;
+    int i;
     for (i = 0; i < N; i++)
     {
-        for(j = 0; j < N - 1; j++)
-        {
-            printf("%.4f,", A[i][j]);
-        }
-        printf("%.4f\n", A[i][j]);
+        print_datapoint(A[i], N);
     }
+    
+}
+void print_datapoint(Datapoint dp, int size)
+{
+    int i;
+    for(i = 0; i < size - 1; i++)
+    {
+        printf("%.4f,", dp[i]);
+    }
+    printf("%.4f\n", dp[i]);
     
 }
