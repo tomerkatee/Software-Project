@@ -75,17 +75,22 @@ Datapoint* read_datapoints(char* file_name)
 }
 
 int main(int argc, char* argv[]){
-    /*
+    Diagonalization diagonlization;
+    Datapoint* datapoints;
+    char *goal, *file_name;
+
+
+    
     int i, j;
     Cluster** cls;
     Datapoint* dps;
     DPNode* nodes[5000];
     long init[] = {2732,2975,4236,4294,4251,3087,1904,1476,304,1373,2389,4066,2406,1977,4221};
     DPNode* node;
-    dps = read_datapoints("input_3.txt");
+    dps = read_datapoints("src\\input_3.txt");
     for(i = 0; i < N; i++)
     {
-        node = (DPNode*)malloc(sizeof(DPNode));
+        node = (DPNode*)calloc_and_check(1, sizeof(DPNode));
         node->value = dps[i];
         node->next = NULL;
         node->prev = NULL;
@@ -104,14 +109,10 @@ int main(int argc, char* argv[]){
         }
         printf("%.4f\n", cls[i]->centroid[dp_size-1]);
     }
-
+   argc=argc;
+   getchar();
     return 0;
-    */
-   
-    Diagonalization diagonlization;
-    Datapoint* datapoints;
-    char *goal, *file_name;
-    int i;
+
 
     goal = argv[1];
     file_name = argv[2];

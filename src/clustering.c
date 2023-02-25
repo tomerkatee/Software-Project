@@ -81,9 +81,9 @@ void update_cluster(Cluster* cl)
 Cluster* init_cluster(DPNode* dp)
 {
     int i;
-    Cluster *cl = (Cluster*)calloc(1, sizeof(Cluster));
-    cl->centroid = (Datapoint)calloc(dp_size, sizeof(double)); 
-    cl->prev = (Datapoint)calloc(dp_size, sizeof(double));
+    Cluster *cl = (Cluster*)calloc_and_check(1, sizeof(Cluster));
+    cl->centroid = (Datapoint)calloc_and_check(dp_size, sizeof(double)); 
+    cl->prev = (Datapoint)calloc_and_check(dp_size, sizeof(double));
     for (i = 0; i < dp_size; i++)
     {
         cl->centroid[i] = dp->value[i];
@@ -140,7 +140,7 @@ int convergence(Cluster* clusters[])
 Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
 {
     int i, j, iteration_number = 0;
-    Cluster **clusters = (Cluster**)calloc(K, sizeof(Cluster*));
+    Cluster **clusters = (Cluster**)calloc_and_check(K, sizeof(Cluster*));
 
     /* initialize centroids */
     for(i = 0; i < K; ++i) { clusters[i] = init_cluster(datapoints[initial_centroids[i]]); }
