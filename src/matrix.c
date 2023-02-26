@@ -80,6 +80,16 @@ Matrix squareMatrix(){
     
 }
 
+void free_matrix(Matrix M)
+{
+    int i;
+    for (i = 0; i < N; i++)
+    {
+        free(M[i]);
+    }
+    free(M);
+}
+
 double degree(Matrix W, int i){
     double sum = 0;
     int j;
@@ -106,8 +116,10 @@ Matrix matMultiplication(Matrix A, Matrix B)
             
         }
     }
+
+    free_matrix(A);
+    free_matrix(B);
     return C;
-    
 }
 
 void print_matrix(Matrix A)

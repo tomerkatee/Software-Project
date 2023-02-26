@@ -131,10 +131,10 @@ int convergence(Cluster* clusters[])
     {
         if(euclidian_distance(clusters[i]->centroid, clusters[i]->prev) >= eps)
         {
-            return 0;
+            return false;
         }
     }
-    return 1;
+    return true;
 }
 
 Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
@@ -145,7 +145,7 @@ Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
     /* initialize centroids */
     for(i = 0; i < K; ++i) { clusters[i] = init_cluster(datapoints[initial_centroids[i]]); }
     
-    while(1)
+    while(true)
     {
         /* assign each datapoint to the closest cluster */
         for(i = 0; i < N; ++i)

@@ -8,6 +8,9 @@
 #include <math.h>
 #include <string.h>
 
+#define true 1
+#define false 0
+
 /* globals */
 extern int N;          /* number of datapoints */
 extern int K;          /* number of clusters */
@@ -86,6 +89,12 @@ Diagonalization jacobi(Matrix A);
 Matrix squareMatrix();
 
 /**
+ * frees the memory allocated for a matrix
+ * @param M a matrix to free
+*/
+void free_matrix(Matrix M);
+
+/**
  * Get the squared euclidian distance of two datapoints
  * @param dp1 a datapoint
  * @param dp2 a datapoint
@@ -128,7 +137,7 @@ Matrix matMultiplication(Matrix A, Matrix B);
  * @param A a matrix
  * @return sum of squares of all off-diagonal elements of A
 */
-double off(Matrix A);
+double off_squared(Matrix A);
 
 /**
  * Prints a matrix's rows. The values of each row are separated by commas
