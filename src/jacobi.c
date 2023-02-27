@@ -118,7 +118,7 @@ Matrix transform(Matrix A, Diagonalization* diag)
     return A_tag;
 }
 
-Diagonalization* jacobi(Matrix A)
+Diagonalization jacobi(Matrix A)
 {
     double prev_off, cur_off = 0;
     int iter_count = 0;
@@ -127,13 +127,16 @@ Diagonalization* jacobi(Matrix A)
 
     while (true)
     {
+        printf("\n");
+        print_matrix(A);
+        printf("\n");
         prev_off = cur_off;
         A = transform(A, diag);
         cur_off = off_squared(A);
-        if(iter_count++ >= iter || cur_off - prev_off <= eps){ break; }
+        if((iter_count++ >= ITER) || (fabs(prev_off - cur_off) <= EPS)){ break; }
     }
 
     diag->eigenvalues = diagonal(A);
     free_matrix(A);
-    return diag;
+    return *diag;
 }

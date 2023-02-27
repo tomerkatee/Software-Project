@@ -7,7 +7,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}\\src\\spkmeans",
-            "args": ["gl", "src\\input_1.txt"],
+            "args": ["jacobi", "src\\input_amitai.txt"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

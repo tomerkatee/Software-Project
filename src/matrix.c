@@ -1,7 +1,6 @@
 #include "spkmeans.h"
 
-int N, K, dp_size, iter;
-double eps;
+int N, K, dp_size;
 
 /* matrix operations */
 

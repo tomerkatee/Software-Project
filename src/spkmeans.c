@@ -75,12 +75,7 @@ Datapoint* read_datapoints(char* file_name)
 }
 
 int main(int argc, char* argv[]){
-    Diagonalization diagonlization;
-    Datapoint* datapoints;
-    char *goal, *file_name;
-
-
-    
+    /*
     int i, j;
     Cluster** cls;
     Datapoint* dps;
@@ -109,28 +104,32 @@ int main(int argc, char* argv[]){
         }
         printf("%.4f\n", cls[i]->centroid[dp_size-1]);
     }
-   argc=argc;
+   
    getchar();
     return 0;
-
-
+    */
+    Diagonalization diagonlization;
+    Datapoint* datapoints;
+    char *goal, *file_name;
+    argc=argc;
+    
     goal = argv[1];
     file_name = argv[2];
     datapoints = read_datapoints(file_name);
+    K=N;
+    print_matrix(gl(datapoints));
     if(!strcmp(goal, "jacobi"))
     {
         diagonlization = jacobi(datapoints);
         print_datapoint(diagonlization.eigenvalues, K);
-        for (i = 0; i < K; i++)
-        {
-            print_datapoint(diagonlization.eigenvectors[i], N);
-        }
+        print_matrix(diagonlization.eigenvectors);
     }
-    if(!strcmp(goal, "wam"))
+    else if(!strcmp(goal, "wam"))
         print_matrix(wam(datapoints));
     else if(!strcmp(goal, "ddg"))
         print_matrix(ddg(datapoints));
     else
         print_matrix(gl(datapoints));
+    getchar();
     return 0;
 }

@@ -35,7 +35,7 @@ def kmeans_pp_algorithm(datapoints, n, k):
 
 def eigengap(eigenvals):
     sorted_vals = sorted(eigenvals)
-    return max([sorted_vals[i+1]-sorted_vals[i] for i in range(len(sorted_vals)-1)])
+    return np.argmax([sorted_vals[i+1]-sorted_vals[i] for i in range(len(sorted_vals)-1)])
 
 
 def print_matrix(rows):

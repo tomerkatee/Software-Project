@@ -129,7 +129,7 @@ int convergence(Cluster* clusters[])
     int i = 0;
     for(; i < K; ++i)
     {
-        if(euclidian_distance(clusters[i]->centroid, clusters[i]->prev) >= eps)
+        if(euclidian_distance(clusters[i]->centroid, clusters[i]->prev) >= EPS)
         {
             return false;
         }
@@ -160,7 +160,7 @@ Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
         for(i = 0; i < K; ++i) { update_cluster(clusters[i]); }
         
         /* check for convergence */
-        if((iteration_number++ >= iter) || convergence(clusters)){ break; }
+        if((iteration_number++ >= ITER) || convergence(clusters)){ break; }
     }
 
     return clusters;
