@@ -28,14 +28,14 @@ typedef struct dp_node{
     Datapoint value;
     struct dp_node* next;
     struct dp_node* prev;
-    int cl_i;
+    int cluster;
 } DPNode;
 
 typedef struct{
     DPNode* datapoints;
-    int size;
     Datapoint centroid;
     Datapoint prev;
+    int size;
 } Cluster;
 
 typedef struct{
@@ -93,6 +93,8 @@ Matrix squareMatrix();
  * @param M a matrix to free
 */
 void free_matrix(Matrix M);
+
+Matrix wam_ddg_gl(Datapoint datapoints[], int ddg_gl);
 
 /**
  * Get the squared euclidian distance of two datapoints
