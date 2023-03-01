@@ -42,7 +42,7 @@ void pivot(Matrix A)
     double max_el = 0, cur_el;
     int i, j;
     piv_i = 0;
-    piv_j = 0;
+    piv_j = 1;
     
     for(i = 0; i < N; i++)
     {
@@ -92,51 +92,57 @@ Datapoint diagonal(Matrix A)
     return diag;
 }
 
-Matrix transform(Matrix A, Diagonalization* diag)
+void transform(Matrix A, Diagonalization* diag)
 {
-    int r, k;
+    int r;
     double t, c, s;
-    Matrix A_tag = squareMatrix();
-
+    Datapoint row_i, row_j;
+    row_i = (Datapoint)calloc_and_check(N, sizeof(double));
+    row_j = (Datapoint)calloc_and_check(N, sizeof(double));
+    
     t = obtain_t(A);
     c = 1 / root_operation(t);
     s = t * c;
     diag->eigenvectors = matMultiplication(diag->eigenvectors, rotationMatrix(piv_i, piv_j, c, s));
 
     for(r = 0; r < N; r++)
-    {
-        for(k = 0; k < N; k++)
-        {
-            A_tag[r][k] = k == piv_i ? c * A[r][piv_i] - s * A[r][piv_j] : (k == piv_j ? c * A[r][piv_j] + s * A[r][piv_i] : A[r][k]);
-        }
+    {   
+        row_i[r] = c * A[r][piv_i] - s * A[r][piv_j];
+        row_j[r] = c * A[r][piv_j] + s * A[r][piv_i];
     }
 
-    A_tag[piv_i][piv_i] = c * c * A[piv_i][piv_i] + s * s * A[piv_j][piv_j] - 2 * s * c * A[piv_i][piv_j];
-    A_tag[piv_j][piv_j] = s * s * A[piv_i][piv_i] + c * c * A[piv_j][piv_j] + 2 * s * c * A[piv_i][piv_j];
-    A_tag[piv_i][piv_j] = 0;
-    
-    return A_tag;
+    row_i[piv_i] = c * c * A[piv_i][piv_i] + s * s * A[piv_j][piv_j] - 2 * s * c * A[piv_i][piv_j];
+    row_j[piv_j] = s * s * A[piv_i][piv_i] + c * c * A[piv_j][piv_j] + 2 * s * c * A[piv_i][piv_j];
+    row_i[piv_j] = 0;
+    row_j[piv_i] = 0;
+
+    for(r = 0; r < N; r++)
+    {
+        A[r][piv_i] = row_i[r];
+        A[r][piv_j] = row_j[r];
+        A[piv_i][r] = row_i[r];
+        A[piv_j][r] = row_j[r];
+    }
+
+    free(row_i);
+    free(row_j);
 }
 
 Diagonalization jacobi(Matrix A)
 {
     double prev_off, cur_off = 0;
     int iter_count = 0;
-    Diagonalization* diag = (Diagonalization*)calloc_and_check(1, sizeof(Diagonalization));
-    diag->eigenvectors = rotationMatrix(0, 1, 1, 0);
+    Diagonalization diag;
+    diag.eigenvectors = rotationMatrix(0, 1, 1, 0);
+    assert(N > 1);
 
     while (true)
     {
-        printf("\n");
-        print_matrix(A);
-        printf("\n");
         prev_off = cur_off;
-        A = transform(A, diag);
+        transform(A, &diag);
         cur_off = off_squared(A);
         if((iter_count++ >= ITER) || (fabs(prev_off - cur_off) <= EPS)){ break; }
     }
-
-    diag->eigenvalues = diagonal(A);
-    free_matrix(A);
-    return *diag;
+    diag.eigenvalues = diagonal(A);
+    return diag;
 }

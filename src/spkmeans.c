@@ -75,61 +75,31 @@ Datapoint* read_datapoints(char* file_name)
 }
 
 int main(int argc, char* argv[]){
-    /*
-    int i, j;
-    Cluster** cls;
-    Datapoint* dps;
-    DPNode* nodes[5000];
-    long init[] = {2732,2975,4236,4294,4251,3087,1904,1476,304,1373,2389,4066,2406,1977,4221};
-    DPNode* node;
-    dps = read_datapoints("src\\input_3.txt");
-    for(i = 0; i < N; i++)
-    {
-        node = (DPNode*)calloc_and_check(1, sizeof(DPNode));
-        node->value = dps[i];
-        node->next = NULL;
-        node->prev = NULL;
-        node->cl_i = 0;
-        nodes[i] = node;
-    }
-    K = 15;
-    eps = 0;
-    iter = 750;
-    cls = kmeans_clustering(nodes, init);
-    for(i = 0; i < K; i++)
-    {
-        for(j = 0; j < dp_size-1; j++)
-        {
-            printf("%.4f,", cls[i]->centroid[j]);
-        }
-        printf("%.4f\n", cls[i]->centroid[dp_size-1]);
-    }
-   
-   getchar();
-    return 0;
-    */
+    Matrix m;
     Diagonalization diagonlization;
     Datapoint* datapoints;
     char *goal, *file_name;
     argc=argc;
-    
+
     goal = argv[1];
     file_name = argv[2];
     datapoints = read_datapoints(file_name);
     K=N;
-    print_matrix(gl(datapoints));
     if(!strcmp(goal, "jacobi"))
     {
         diagonlization = jacobi(datapoints);
         print_datapoint(diagonlization.eigenvalues, K);
-        print_matrix(diagonlization.eigenvectors);
+        m = diagonlization.eigenvectors;
+        free(diagonlization.eigenvalues);
     }
     else if(!strcmp(goal, "wam"))
-        print_matrix(wam(datapoints));
+        m = wam(datapoints);
     else if(!strcmp(goal, "ddg"))
-        print_matrix(ddg(datapoints));
+        m = ddg(datapoints);
     else
-        print_matrix(gl(datapoints));
-    getchar();
+        m = gl(datapoints);
+    print_matrix(m);
+    free_matrix(m);
+    free_matrix(datapoints);
     return 0;
 }
