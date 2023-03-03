@@ -52,7 +52,7 @@ int get_matrix(PyObject *mat, Matrix M)
 
     for(i = 0; i < N; ++i)
     {
-        dp = PyList_GetItem(lst, i);
+        dp = PyList_GetItem(mat, i);
         if(!PyList_Check(dp)){
             return false;
         }
@@ -86,21 +86,20 @@ PyObject* make_centroids(Cluster** clusters)
     return centroids;
 }
 
-PyObject* build_matrix(Matrix M)
+PyObject* make_datapoints(Datapoint* datapoints, int size)
 {
-    PyObject* mat= PyList_New(N);
+    PyObject* dp_lst = PyList_New(N);
     PyObject* lst;
-    int i, j;
-    for(i = 0; i < N; ++i)
+    for(int i = 0; i < K; ++i)
     {
-        lst = PyList_New(N);
-        for(j = 0; j < N; ++j)
+        lst = PyList_New(size);
+        for(int j = 0; j < size; ++j)
         {
-            PyList_SetItem(lst, j, Py_BuildValue("d", M[i][j]));
+            PyList_SetItem(lst, j, Py_BuildValue("d", datapoints[i][j]));
         }
-        PyList_SetItem(mat, i, lst);
+        PyList_SetItem(dp_lst, i, lst);
     }
-    return mat;
+    return dp_lst;
 }
 
 static PyObject* spk_wrapper(PyObject *self, PyObject *args)
@@ -116,7 +115,7 @@ static PyObject* spk_wrapper(PyObject *self, PyObject *args)
 
     /* fetch the datapoints */
     N = PyList_Size(dp_lst);
-    Datapoint *datapoints[N];
+    Datapoint datapoints[N];
     if(!get_datapoints_list(dp_lst, datapoints)){
         return NULL;
     }
@@ -152,7 +151,7 @@ static PyObject* spk_wrapper(PyObject *self, PyObject *args)
 static PyObject* wam_ddg_gl_wrapper(PyObject *self, PyObject *args, int ddg_gl)
 {
     PyObject* dp_lst;
-    if(!PyArg_ParseTuple("Oi", &dp_lst, dp_size)){
+    if(!PyArg_ParseTuple(args, "Oi", dp_lst, &dp_size)){
         return NULL;
     }
 
@@ -163,31 +162,31 @@ static PyObject* wam_ddg_gl_wrapper(PyObject *self, PyObject *args, int ddg_gl)
     }
 
     Matrix M = wam_ddg_gl(datapoints, ddg_gl);
-    PyObject* mat = build_matrix(M);
+    PyObject* mat = make_datapoints(M, N);
 
     free_matrix(M);
     return Py_BuildValue("O", mat);
 }
 
-static PyObject* wam_wrapper(yObject *self, PyObject *args)
+static PyObject* wam_wrapper(PyObject *self, PyObject *args)
 {
     return wam_ddg_gl_wrapper(self, args, 0);
 }
 
-static PyObject* ddg_wrapper(yObject *self, PyObject *args)
+static PyObject* ddg_wrapper(PyObject *self, PyObject *args)
 {
     return wam_ddg_gl_wrapper(self, args, 1);
 }
 
-static PyObject* gl_wrapper(yObject *self, PyObject *args)
+static PyObject* gl_wrapper(PyObject *self, PyObject *args)
 {
     return wam_ddg_gl_wrapper(self, args, 2);
 }
 
-static PyObject* jacobi_wrapper(yObject *self, PyObject *args)
+static PyObject* jacobi_wrapper(PyObject *self, PyObject *args)
 {
     PyObject* dp_lst;
-    if(!PyArg_ParseTuple("Oi", &dp_lst, dp_size)){
+    if(!PyArg_ParseTuple(args, "Oi", dp_lst, &dp_size)){
         return NULL;
     }
 
@@ -197,55 +196,90 @@ static PyObject* jacobi_wrapper(yObject *self, PyObject *args)
         return NULL;
     }
 
-    Diagonalization diag = jacobi(M);
-    PyObject* vecs = build_matrix(diag.eigenvectors);
+    Diagonalization* diag = jacobi(M);
+    PyObject* vecs = make_datapoints(diag->eigenvectors, N);
     PyObject* vals = PyList_New(N);
     for(int i = 0; i < N; ++i)
     {
-        PyList_SetItem(vals, i, diag.eigenvalues[i]);
+        PyList_SetItem(vals, i, Py_BuildValue("d", diag->eigenvalues[i]));
     }
 
     free_matrix(M);
-    free_matrix(diag.eigenvectors);
-    free_datapoint(diag.eigenvalues);
+    free_matrix(diag->eigenvectors);
+    free(diag->eigenvalues);
     return Py_BuildValue("OO", vals, vecs);
 }
 
-static PyMethodDef kmeansMethods[] = {
+static PyObject* read_datapoints_wrapper(PyObject* self, PyObject* args)
+{
+    char* filename;
+    if(!PyArg_ParseTuple(args, "s", filename)){
+        return NULL;
+    }
+
+    Datapoint* datapoints = read_datapoints(filename);
+    PyObject* dp_lst = make_datapoints(datapoints, dp_size);
+
+    free(datapoints);
+    return Py_BuildValue("O", dp_lst);
+}
+
+static PyMethodDef spkmeansMethods[] = {
     {
         /* name exposed to Python */
-        "spk_wrapper",
+        "spk",
 
         /* C wrapper function */
         spk_wrapper,
 
         /* receives variable args */
-        METH_VARARGS,
+        METH_VARARGS
+    }, {
+        "wam",
 
-        /* docstring */
-        "The kmeans-clustering algorithm\n"
-        "@param list of datapoint pointers\n"
-        "@param list of indexes of the initial centroids as in the kmeans_pp init\n"
-        "@param size of each datapoint\n"
-        "@param number of K-means iterations\n"
-        "@return list of centroids"
+        wam_wrapper,
+
+        METH_VARARGS
+    }, {
+        "ddg",
+
+        ddg_wrapper,
+
+        METH_VARARGS
+    }, {
+        "gl",
+
+        gl_wrapper,
+        
+        METH_VARARGS
+    }, {
+        "jacobi",
+
+        jacobi_wrapper,
+
+        METH_VARARGS
+    }, {
+        "read_datapoints",
+
+        read_datapoints_wrapper,
+
+        METH_VARARGS
     }, {
         NULL, NULL, 0, NULL
     }
 };
 
-
-static struct PyModuleDef mykmeanssp = {
+static struct PyModuleDef spkmeansmodule = {
     PyModuleDef_HEAD_INIT,
-    "mykmeanssp",
+    "spkmeans_module",
     "C module for the kmeans-clustering algorithm.",
     -1,
-    kmeansMethods
+    spkmeansMethods
 };
 
-PyMODINIT_FUNC PyInit_mykmeanssp(void)
+PyMODINIT_FUNC PyInit_spkmeans_module(void)
 {
-    PyObject *module = PyModule_Create(&mykmeanssp);
+    PyObject *module = PyModule_Create(&spkmeansmodule);
     if(!module){
         return NULL;
     }

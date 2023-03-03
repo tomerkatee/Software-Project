@@ -151,9 +151,9 @@ Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
         for(i = 0; i < N; ++i)
         {
             j = get_closest_cluster(clusters, datapoints[i]->value);
-            remove_datapoint(clusters[datapoints[i]->cl_i], datapoints[i]);
+            remove_datapoint(clusters[datapoints[i]->cluster], datapoints[i]);
             add_datapoint(clusters[j], datapoints[i]);
-            datapoints[i]->cl_i = j;
+            datapoints[i]->cluster = j;
         }
 
         /* update the centroids */ 

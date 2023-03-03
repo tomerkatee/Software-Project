@@ -1,8 +1,11 @@
 #ifndef SPKMEANS_H
 #define SPKMEANS_H
 
-/* includes */
+#ifndef _GNU_SOURCE
 #define  _GNU_SOURCE
+#endif
+
+/* includes */
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
