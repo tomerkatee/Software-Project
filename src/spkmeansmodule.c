@@ -3,7 +3,7 @@
 # include "spkmeans.h"
 
 
-int get_datapoints_list(PyObject *lst, Datapoint datapoints[])
+int get_datapoints(PyObject *lst, Datapoint datapoints[], int size)
 {
     PyObject *dp;
     PyObject *item;
@@ -15,9 +15,9 @@ int get_datapoints_list(PyObject *lst, Datapoint datapoints[])
         if(!PyList_Check(dp)){
             return false;
         }
-        datapoints[i] = calloc_and_check(dp_size, sizeof(double));
+        datapoints[i] = calloc_and_check(size, sizeof(double));
 
-        for(j = 0; j < dp_size; ++j)
+        for(j = 0; j < size; ++j)
         {
             item = PyList_GetItem(dp, j);
             if(!PyFloat_Check(item)){
@@ -29,7 +29,7 @@ int get_datapoints_list(PyObject *lst, Datapoint datapoints[])
     return true;
 }
 
-int get_centroid_list(PyObject *lst, long initial_centroids[])
+int get_centroids(PyObject *lst, long initial_centroids[])
 {
     PyObject *item;
     int i;
@@ -40,31 +40,6 @@ int get_centroid_list(PyObject *lst, long initial_centroids[])
             return false;
         }
         initial_centroids[i] = PyLong_AsLong(item);
-    }
-    return true;
-}
-
-int get_matrix(PyObject *mat, Matrix M)
-{
-    PyObject *dp;
-    PyObject *item;
-    int i, j;
-
-    for(i = 0; i < N; ++i)
-    {
-        dp = PyList_GetItem(mat, i);
-        if(!PyList_Check(dp)){
-            return false;
-        }
-
-        for(j = 0; j < N; ++j)
-        {
-            item = PyList_GetItem(dp, j);
-            if(!PyFloat_Check(item)){
-                return false;
-            }
-            M[i][j] = PyFloat_AsDouble(item);
-        }
     }
     return true;
 }
@@ -116,14 +91,14 @@ static PyObject* spk_wrapper(PyObject *self, PyObject *args)
     /* fetch the datapoints */
     N = PyList_Size(dp_lst);
     Datapoint datapoints[N];
-    if(!get_datapoints_list(dp_lst, datapoints)){
+    if(!get_datapoints(dp_lst, datapoints, dp_size)){
         return NULL;
     }
 
     /* fetch the initial centroids */
     K = PyList_Size(centroid_lst);
     long initial_centroids[K];
-    if(!get_centroid_list(centroid_lst, initial_centroids)){
+    if(!get_centroids(centroid_lst, initial_centroids)){
         return NULL;
     }
 
@@ -150,14 +125,14 @@ static PyObject* spk_wrapper(PyObject *self, PyObject *args)
 
 static PyObject* wam_ddg_gl_wrapper(PyObject *self, PyObject *args, int ddg_gl)
 {
-    PyObject* dp_lst;
+    PyObject* dp_lst = NULL;
     if(!PyArg_ParseTuple(args, "Oi", dp_lst, &dp_size)){
         return NULL;
     }
 
     N = PyList_Size(dp_lst);
     Datapoint datapoints[N];
-    if(!get_datapoints_list(dp_lst, datapoints)){
+    if(!get_datapoints(dp_lst, datapoints, dp_size)){
         return NULL;
     }
 
@@ -185,14 +160,14 @@ static PyObject* gl_wrapper(PyObject *self, PyObject *args)
 
 static PyObject* jacobi_wrapper(PyObject *self, PyObject *args)
 {
-    PyObject* dp_lst;
+    PyObject* dp_lst = NULL;
     if(!PyArg_ParseTuple(args, "Oi", dp_lst, &dp_size)){
         return NULL;
     }
 
     N = PyList_Size(dp_lst);
-    Matrix M = squareMatrix();
-    if(!get_matrix(dp_lst, M)){
+    Datapoint M[N];
+    if(!get_datapoints(dp_lst, M, N)){
         return NULL;
     }
 
@@ -212,7 +187,7 @@ static PyObject* jacobi_wrapper(PyObject *self, PyObject *args)
 
 static PyObject* read_datapoints_wrapper(PyObject* self, PyObject* args)
 {
-    char* filename;
+    char* filename = NULL;
     if(!PyArg_ParseTuple(args, "s", filename)){
         return NULL;
     }
