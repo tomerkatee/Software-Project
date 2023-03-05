@@ -28,11 +28,27 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
+            "cwd": "${fileDirname}",
             "console": "integratedTerminal",
             "env": {},
             "cwd": "${workspaceFolder}",
-            "pythonPath": null,
-            "args": ["3", "wam", "input_1.txt"]
+            "python": null,
+            "args": ["3", "spk", "src/input_1.txt"]
+        },
+        {
+            "name": "(gdb) Attach",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "C:\\Users\\tomerk003\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }

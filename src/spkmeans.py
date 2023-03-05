@@ -1,4 +1,4 @@
-import sys, numpy as np
+import sys, numpy as np, pandas as pd
 
 import mykmeanssp
 
@@ -29,7 +29,7 @@ def distance(dp1, dp2):
 
 def kmeans_pp_algorithm(datapoints, n, k):
 
-    dp_np = datapoints.to_numpy()
+    dp_np = np.array(datapoints)
 
     np.random.seed(0)
 
@@ -67,31 +67,31 @@ def eigengap(eigenvals):
 
 
 def print_matrix(rows):
-
     for row in rows:
-
-        print(','.join(row))
+        print(','.join(["{:.4f}".format(v) for v in row]))
 
 
 
 def main():
+    global k
+    print(mykmeanssp.return1()) # remove it   
     read_args()
-
     datapoints = mykmeanssp.read_datapoints(file_name)
-
+    dp_size = len(datapoints[0])
+    dp_count = len(datapoints)
     if goal == "jacobi":
 
-        eigenvals, eigenvecs = mykmeansmodule.jacobi(datapoints, dp_count)
+        eigenvals, eigenvecs = mykmeanssp.jacobi(datapoints)
 
-        print(','.join(eigenvals))
+        print(','.join(["{:.4f}".format(v) for v in eigenvals]))
 
         print_matrix(eigenvecs)
 
     elif goal == "spk":
 
-        gl = mykmeansmodule.gl(datapoints, dp_length)
+        gl = mykmeanssp.gl(datapoints, dp_size)
 
-        eigenvals, eigenvecs = mykmeansmodule.jacobi(gl, dp_count)
+        eigenvals, eigenvecs = mykmeanssp.jacobi(gl)
 
         if k == -1:
 
@@ -99,24 +99,24 @@ def main():
 
         eigendatapoints = [[eigenvecs[j][i] for j in range(k)] for i in range(dp_count)]
 
-        initial_centroids = kmeans_pp_algorithm(eigendatapoints)
+        initial_centroids = kmeans_pp_algorithm(eigendatapoints, dp_size, k)
         print(initial_centroids)
 
-        centroids = mykmeansmodule.spk(eigendatapoints, initial_centroids)
+        centroids = mykmeanssp.spk(eigendatapoints, initial_centroids, k)
 
         print_matrix(centroids)
 
     elif goal == "wam":
 
-        print_matrix(mykmeansmodule.wam(datapoints, dp_length))
+        print_matrix(mykmeanssp.wam(datapoints, dp_size))
 
     elif goal == "ddg":
 
-        print_matrix(mykmeansmodule.ddg(datapoints, dp_length))
+        print_matrix(mykmeanssp.ddg(datapoints, dp_size))
 
     elif goal == "gl":
 
-        print_matrix(mykmeansmodule.gl(datapoints, dp_length))
+        print_matrix(mykmeanssp.gl(datapoints, dp_size))
 
 
 

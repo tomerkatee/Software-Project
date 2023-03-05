@@ -8,23 +8,27 @@ int get_datapoints(PyObject *lst, Datapoint datapoints[], int size)
     PyObject *dp;
     PyObject *item;
     int i, j;
-
+    
     for(i = 0; i < N; ++i)
     {
         dp = PyList_GetItem(lst, i);
+        
         if(!PyList_Check(dp)){
             return false;
         }
         datapoints[i] = calloc_and_check(size, sizeof(double));
-
+        
         for(j = 0; j < size; ++j)
         {
             item = PyList_GetItem(dp, j);
+            printf("barba");
             if(!PyFloat_Check(item)){
                 return false;
             }
+            printf("ima");
             datapoints[i][j] = PyFloat_AsDouble(item);
         }
+        
     }
     return true;
 }
@@ -65,7 +69,7 @@ PyObject* make_datapoints(Datapoint* datapoints, int size)
 {
     PyObject* dp_lst = PyList_New(N);
     PyObject* lst;
-    for(int i = 0; i < K; ++i)
+    for(int i = 0; i < N; ++i)
     {
         lst = PyList_New(size);
         for(int j = 0; j < size; ++j)
@@ -82,51 +86,60 @@ static PyObject* spk_wrapper(PyObject *self, PyObject *args)
     PyObject *dp_lst;
     PyObject *centroid_lst;
     int i;
-    
+    printf("mi");
     /* take in the raw arguments */
     if(!PyArg_ParseTuple(args, "OOi", &dp_lst, &centroid_lst, &dp_size)){
         return NULL;
     }
-
+    printf("shemaamin");
     /* fetch the datapoints */
     N = PyList_Size(dp_lst);
-    Datapoint datapoints[N];
+    Datapoint *datapoints = (Datapoint*)calloc_and_check(N, sizeof(Datapoint));
+    printf("lo");
     if(!get_datapoints(dp_lst, datapoints, dp_size)){
         return NULL;
     }
-
+    printf("mefahed");
     /* fetch the initial centroids */
     K = PyList_Size(centroid_lst);
     long initial_centroids[K];
     if(!get_centroids(centroid_lst, initial_centroids)){
         return NULL;
     }
-
+    
     /* build the datapoint nodes */
-    DPNode *nodes[N];
+    DPNode **nodes = (DPNode**)calloc_and_check(N, sizeof(DPNode*));
+    printf("gashum");
     for(i = 0; i < N; ++i)
     {
+        printf("meod");
+        printf("%f", datapoints[i][i]);
         nodes[i]->value = datapoints[i];
+        printf("meod");
         nodes[i]->next = NULL;
+        printf("meod");
         nodes[i]->prev = NULL;
+        printf("meod");
         nodes[i]->cluster = 0;
+        printf("meod");
     }
-
+    printf("kvar");
     /* call the clustering method and build the return value */
     Cluster** clusters = kmeans_clustering(nodes, initial_centroids);
     centroid_lst = make_centroids(clusters);
-
+    printf("sof");
     /* free the allocated memory */
-    for(i = 0; i < N; ++i){ free(nodes[i]->value); }
+    for(i = 0; i < N; ++i){ free(nodes[i]->value); free(nodes[i]); free(nodes); }
     for(i = 0; i < K; ++i){ free(clusters[i]); }
-
+    for(i = 0; i < N; ++i){ free(datapoints[i]); }
+    printf("ona");
     return Py_BuildValue("O", centroid_lst);
 }
 
 static PyObject* wam_ddg_gl_wrapper(PyObject *self, PyObject *args, int ddg_gl)
 {
     PyObject* dp_lst = NULL;
-    if(!PyArg_ParseTuple(args, "Oi", dp_lst, &dp_size)){
+    if(!PyArg_ParseTuple(args, "Oi", &dp_lst, &dp_size)){
         return NULL;
     }
 
@@ -140,6 +153,7 @@ static PyObject* wam_ddg_gl_wrapper(PyObject *self, PyObject *args, int ddg_gl)
     PyObject* mat = make_datapoints(M, N);
 
     free_matrix(M);
+    for(int i = 0; i < N; ++i){ free(datapoints[i]); }
     return Py_BuildValue("O", mat);
 }
 
@@ -161,16 +175,17 @@ static PyObject* gl_wrapper(PyObject *self, PyObject *args)
 static PyObject* jacobi_wrapper(PyObject *self, PyObject *args)
 {
     PyObject* dp_lst = NULL;
-    if(!PyArg_ParseTuple(args, "Oi", dp_lst, &dp_size)){
+    if(!PyArg_ParseTuple(args, "O", &dp_lst)){
         return NULL;
     }
-
+    
     N = PyList_Size(dp_lst);
-    Datapoint M[N];
+    Matrix M = (Matrix)calloc_and_check(N, sizeof(Datapoint));
+
     if(!get_datapoints(dp_lst, M, N)){
+        
         return NULL;
     }
-
     Diagonalization diag = jacobi(M);
     PyObject* vecs = make_datapoints(diag.eigenvectors, N);
     PyObject* vals = PyList_New(N);
@@ -178,7 +193,6 @@ static PyObject* jacobi_wrapper(PyObject *self, PyObject *args)
     {
         PyList_SetItem(vals, i, Py_BuildValue("d", diag.eigenvalues[i]));
     }
-
     free_matrix(M);
     free_matrix(diag.eigenvectors);
     free(diag.eigenvalues);
@@ -187,11 +201,11 @@ static PyObject* jacobi_wrapper(PyObject *self, PyObject *args)
 
 static PyObject* read_datapoints_wrapper(PyObject* self, PyObject* args)
 {
+    
     char* filename = NULL;
-    if(!PyArg_ParseTuple(args, "s", filename)){
+    if(!PyArg_ParseTuple(args, "s", &filename)){
         return NULL;
     }
-
     Datapoint* datapoints = read_datapoints(filename);
     PyObject* dp_lst = make_datapoints(datapoints, dp_size);
 
@@ -199,7 +213,18 @@ static PyObject* read_datapoints_wrapper(PyObject* self, PyObject* args)
     return Py_BuildValue("O", dp_lst);
 }
 
+static PyObject* return1_wrapper(PyObject* self, PyObject* args)
+{
+    return PyLong_FromLong(1);  
+}
+
 static PyMethodDef spkmeansMethods[] = {
+
+    {
+        "return1",
+        return1_wrapper,
+        METH_VARARGS
+    },
     {
         /* name exposed to Python */
         "spk",
