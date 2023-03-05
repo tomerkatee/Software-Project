@@ -22,6 +22,17 @@
                 }
             ],
             "preLaunchTask": "make"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "env": {},
+            "cwd": "${workspaceFolder}",
+            "pythonPath": null,
+            "args": ["3", "wam", "input_1.txt"]
         }
     ]
 }

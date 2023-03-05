@@ -1,5 +1,5 @@
 import sys, numpy as np
-#import mykmeanssp
+import mykmeanssp
 
 global k, goal, file_name
 

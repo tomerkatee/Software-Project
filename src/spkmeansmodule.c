@@ -171,17 +171,17 @@ static PyObject* jacobi_wrapper(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    Diagonalization* diag = jacobi(M);
-    PyObject* vecs = make_datapoints(diag->eigenvectors, N);
+    Diagonalization diag = jacobi(M);
+    PyObject* vecs = make_datapoints(diag.eigenvectors, N);
     PyObject* vals = PyList_New(N);
     for(int i = 0; i < N; ++i)
     {
-        PyList_SetItem(vals, i, Py_BuildValue("d", diag->eigenvalues[i]));
+        PyList_SetItem(vals, i, Py_BuildValue("d", diag.eigenvalues[i]));
     }
 
     free_matrix(M);
-    free_matrix(diag->eigenvectors);
-    free(diag->eigenvalues);
+    free_matrix(diag.eigenvectors);
+    free(diag.eigenvalues);
     return Py_BuildValue("OO", vals, vecs);
 }
 
@@ -244,17 +244,17 @@ static PyMethodDef spkmeansMethods[] = {
     }
 };
 
-static struct PyModuleDef spkmeansmodule = {
+static struct PyModuleDef mykmeanssp = {
     PyModuleDef_HEAD_INIT,
-    "spkmeans_module",
+    "mykmeanssp",
     "C module for the kmeans-clustering algorithm.",
     -1,
     spkmeansMethods
 };
 
-PyMODINIT_FUNC PyInit_spkmeans_module(void)
+PyMODINIT_FUNC PyInit_mykmeanssp(void)
 {
-    PyObject *module = PyModule_Create(&spkmeansmodule);
+    PyObject *module = PyModule_Create(&mykmeanssp);
     if(!module){
         return NULL;
     }
