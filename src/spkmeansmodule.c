@@ -21,11 +21,9 @@ int get_datapoints(PyObject *lst, Datapoint datapoints[], int size)
         for(j = 0; j < size; ++j)
         {
             item = PyList_GetItem(dp, j);
-            printf("barba");
             if(!PyFloat_Check(item)){
                 return false;
             }
-            printf("ima");
             datapoints[i][j] = PyFloat_AsDouble(item);
         }
         
@@ -86,20 +84,16 @@ static PyObject* spk_wrapper(PyObject *self, PyObject *args)
     PyObject *dp_lst;
     PyObject *centroid_lst;
     int i;
-    printf("mi");
     /* take in the raw arguments */
     if(!PyArg_ParseTuple(args, "OOi", &dp_lst, &centroid_lst, &dp_size)){
         return NULL;
     }
-    printf("shemaamin");
     /* fetch the datapoints */
     N = PyList_Size(dp_lst);
     Datapoint *datapoints = (Datapoint*)calloc_and_check(N, sizeof(Datapoint));
-    printf("lo");
     if(!get_datapoints(dp_lst, datapoints, dp_size)){
         return NULL;
     }
-    printf("mefahed");
     /* fetch the initial centroids */
     K = PyList_Size(centroid_lst);
     long initial_centroids[K];
@@ -108,31 +102,25 @@ static PyObject* spk_wrapper(PyObject *self, PyObject *args)
     }
     
     /* build the datapoint nodes */
-    DPNode **nodes = (DPNode**)calloc_and_check(N, sizeof(DPNode*));
-    printf("gashum");
+    DPNode **nodes_pointers = (DPNode**)calloc_and_check(N, sizeof(DPNode*));
+    DPNode *nodes = (DPNode*)calloc_and_check(N, sizeof(DPNode));
+    for(i = 0; i < N; ++i){ nodes_pointers[i] = &nodes[i]; }
     for(i = 0; i < N; ++i)
     {
-        printf("meod");
-        printf("%f", datapoints[i][i]);
-        nodes[i]->value = datapoints[i];
-        printf("meod");
-        nodes[i]->next = NULL;
-        printf("meod");
-        nodes[i]->prev = NULL;
-        printf("meod");
-        nodes[i]->cluster = 0;
-        printf("meod");
+        nodes_pointers[i]->value = datapoints[i];
+        nodes_pointers[i]->next = NULL;
+        nodes_pointers[i]->prev = NULL;
+        nodes_pointers[i]->cluster = 0;
     }
-    printf("kvar");
     /* call the clustering method and build the return value */
-    Cluster** clusters = kmeans_clustering(nodes, initial_centroids);
+    Cluster** clusters = kmeans_clustering(nodes_pointers, initial_centroids);
     centroid_lst = make_centroids(clusters);
-    printf("sof");
+
     /* free the allocated memory */
-    for(i = 0; i < N; ++i){ free(nodes[i]->value); free(nodes[i]); free(nodes); }
+    free(nodes_pointers);
+    free(nodes);
     for(i = 0; i < K; ++i){ free(clusters[i]); }
     for(i = 0; i < N; ++i){ free(datapoints[i]); }
-    printf("ona");
     return Py_BuildValue("O", centroid_lst);
 }
 
@@ -213,18 +201,8 @@ static PyObject* read_datapoints_wrapper(PyObject* self, PyObject* args)
     return Py_BuildValue("O", dp_lst);
 }
 
-static PyObject* return1_wrapper(PyObject* self, PyObject* args)
-{
-    return PyLong_FromLong(1);  
-}
-
 static PyMethodDef spkmeansMethods[] = {
 
-    {
-        "return1",
-        return1_wrapper,
-        METH_VARARGS
-    },
     {
         /* name exposed to Python */
         "spk",
