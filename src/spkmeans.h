@@ -120,33 +120,12 @@ double sq_distance(Datapoint dp1, Datapoint dp2);
 double euclidian_distance(Datapoint dp1, Datapoint dp2);
 
 /**
- * Get the degree of a node in a graph
- * @param W a weighted adjacency matrix
- * @param i index of a node
- * @return the degree of i in A
-*/
-double degree(Matrix W, int i);
-
-/**
- * Builds a rotation matrix
- * @param c cosine of rotation angle
- * @param s sine of rotation angle
-*/
-Matrix rotationMatrix(int i, int j, double c, double s);
-
-/**
  * Matrix multiplication
  * @param A a matrix
  * @param B a matrix
  * @return A * B
 */
 Matrix matMultiplication(Matrix A, Matrix B);
-
-/**
- * @param A a matrix
- * @return sum of squares of all off-diagonal elements of A
-*/
-double off_squared(Matrix A);
 
 /**
  * Prints a matrix's rows. The values of each row are separated by commas
@@ -174,14 +153,5 @@ Datapoint* read_datapoints(char* file_name);
  * @param size size of each block
 */
 void *calloc_and_check(size_t nitems, size_t size);
-
-/**
- * Clusters the datapoints by the kmeans algorithm
- * @param datapoints the datapoints to cluster
- * @param initial_centroids array with the indexes of the initial centroids in datapoints
- * @return array of the clusters created
-*/
-Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[]);
-
 
 #endif

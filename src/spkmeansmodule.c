@@ -8,6 +8,10 @@ int get_datapoints(PyObject *lst, Datapoint datapoints[], int size)
     PyObject *dp;
     PyObject *item;
     int i, j;
+
+    if(!PyList_Check(lst)){
+        return false;
+    }
     
     for(i = 0; i < N; ++i)
     {
@@ -26,7 +30,6 @@ int get_datapoints(PyObject *lst, Datapoint datapoints[], int size)
             }
             datapoints[i][j] = PyFloat_AsDouble(item);
         }
-        
     }
     return true;
 }
@@ -35,6 +38,11 @@ int get_centroids(PyObject *lst, long initial_centroids[])
 {
     PyObject *item;
     int i;
+
+    if(!PyList_Check(lst)){
+        return false;
+    }
+
     for(i = 0; i < K; ++i)
     {
         item = PyList_GetItem(lst, i);
@@ -78,6 +86,8 @@ PyObject* make_datapoints(Datapoint* datapoints, int size)
     }
     return dp_lst;
 }
+
+/* wrapper methods */
 
 static PyObject* spk_wrapper(PyObject *self, PyObject *args)
 {
@@ -189,7 +199,6 @@ static PyObject* jacobi_wrapper(PyObject *self, PyObject *args)
 
 static PyObject* read_datapoints_wrapper(PyObject* self, PyObject* args)
 {
-    
     char* filename = NULL;
     if(!PyArg_ParseTuple(args, "s", &filename)){
         return NULL;
@@ -201,8 +210,9 @@ static PyObject* read_datapoints_wrapper(PyObject* self, PyObject* args)
     return Py_BuildValue("O", dp_lst);
 }
 
-static PyMethodDef spkmeansMethods[] = {
+/* method and module definition */
 
+static PyMethodDef spkmeansMethods[] = {
     {
         /* name exposed to Python */
         "spk",
@@ -211,37 +221,50 @@ static PyMethodDef spkmeansMethods[] = {
         spk_wrapper,
 
         /* receives variable args */
-        METH_VARARGS
+        METH_VARARGS,
+
+        /* docstring */
+        PyDoc_STR("Receives list of datapoints, indexes of initial centroids and the datapoint size, returns the final centroids")
     }, {
         "wam",
 
         wam_wrapper,
 
-        METH_VARARGS
+        METH_VARARGS,
+
+        PyDoc_STR("Receives list of datapoints and the datapoint size, returns the Weighted Adjacency Matrix")
     }, {
         "ddg",
 
         ddg_wrapper,
 
-        METH_VARARGS
+        METH_VARARGS,
+
+        PyDoc_STR("Receives list of datapoints and the datapoint size, returns the Diagonal Degree Matrix")
     }, {
         "gl",
 
         gl_wrapper,
         
-        METH_VARARGS
+        METH_VARARGS,
+
+        PyDoc_STR("Receives list of datapoints and the datapoint size, returns the Graph Laplacian")
     }, {
         "jacobi",
 
         jacobi_wrapper,
 
-        METH_VARARGS
+        METH_VARARGS,
+
+        PyDoc_STR("Receives a real, symmetric, full rank matrix and returns its eigenvalues and eigenvectors")
     }, {
         "read_datapoints",
 
         read_datapoints_wrapper,
 
-        METH_VARARGS
+        METH_VARARGS,
+
+        PyDoc_STR("Receives a filename, reads the file and returns the datapoints")
     }, {
         NULL, NULL, 0, NULL
     }
@@ -258,8 +281,5 @@ static struct PyModuleDef mykmeanssp = {
 PyMODINIT_FUNC PyInit_mykmeanssp(void)
 {
     PyObject *module = PyModule_Create(&mykmeanssp);
-    if(!module){
-        return NULL;
-    }
-    return module;
+    return !module ? NULL : module;
 }

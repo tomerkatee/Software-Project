@@ -32,6 +32,16 @@ double euclidian_distance(Datapoint dp1, Datapoint dp2)
     return sqrt(sq_distance(dp1, dp2));
 }
 
+double degree(Matrix W, int i){
+    double sum = 0;
+    int j;
+    for (j = 0; j < N; j++)
+    {
+        sum += W[i][j];
+    }
+    return sum;
+}
+
 Matrix wam_ddg_gl(Datapoint datapoints[], int ddg_gl)
 {
     Matrix W;
@@ -89,16 +99,6 @@ void free_matrix(Matrix M)
         free(M[i]);
     }
     free(M);
-}
-
-double degree(Matrix W, int i){
-    double sum = 0;
-    int j;
-    for (j = 0; j < N; j++)
-    {
-        sum += W[i][j];
-    }
-    return sum;
 }
 
 Matrix matMultiplication(Matrix A, Matrix B)
