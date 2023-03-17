@@ -1,3 +1,43 @@
-0,1,1
-1,0,1
-1,1,0
+python3 spkmeans.py wam tests/test_batch/test1.txt > tests/ans_batch/test1_wam.txt
+python3 spkmeans.py wam tests/test_batch/test2.txt > tests/ans_batch/test2_wam.txt
+python3 spkmeans.py wam tests/test_batch/test3.txt > tests/ans_batch/test3_wam.txt
+python3 spkmeans.py wam tests/test_batch/test4.txt > tests/ans_batch/test4_wam.txt
+python3 spkmeans.py wam tests/test_batch/test5.txt > tests/ans_batch/test5_wam.txt
+python3 spkmeans.py wam tests/test_batch/test6.txt > tests/ans_batch/test6_wam.txt
+python3 spkmeans.py wam tests/test_batch/test7.txt > tests/ans_batch/test7_wam.txt
+python3 spkmeans.py wam tests/test_batch/test8.txt > tests/ans_batch/test8_wam.txt
+python3 spkmeans.py wam tests/test_batch/test9.txt > tests/ans_batch/test9_wam.txt
+python3 spkmeans.py wam tests/test_batch/test10.txt > tests/ans_batch/test10_wam.txt
+
+python3 spkmeans.py ddg tests/test_batch/test1.txt > tests/ans_batch/test1_ddg.txt
+python3 spkmeans.py ddg tests/test_batch/test2.txt > tests/ans_batch/test2_ddg.txt
+python3 spkmeans.py ddg tests/test_batch/test3.txt > tests/ans_batch/test3_ddg.txt
+python3 spkmeans.py ddg tests/test_batch/test4.txt > tests/ans_batch/test4_ddg.txt
+python3 spkmeans.py ddg tests/test_batch/test5.txt > tests/ans_batch/test5_ddg.txt
+python3 spkmeans.py ddg tests/test_batch/test6.txt > tests/ans_batch/test6_ddg.txt
+python3 spkmeans.py ddg tests/test_batch/test7.txt > tests/ans_batch/test7_ddg.txt
+python3 spkmeans.py ddg tests/test_batch/test8.txt > tests/ans_batch/test8_ddg.txt
+python3 spkmeans.py ddg tests/test_batch/test9.txt > tests/ans_batch/test9_ddg.txt
+python3 spkmeans.py ddg tests/test_batch/test10.txt > tests/ans_batch/test10_ddg.txt
+
+python3 spkmeans.py gl tests/test_batch/test1.txt > tests/ans_batch/test1_gl.txt
+python3 spkmeans.py gl tests/test_batch/test2.txt > tests/ans_batch/test2_gl.txt
+python3 spkmeans.py gl tests/test_batch/test3.txt > tests/ans_batch/test3_gl.txt
+python3 spkmeans.py gl tests/test_batch/test4.txt > tests/ans_batch/test4_gl.txt
+python3 spkmeans.py gl tests/test_batch/test5.txt > tests/ans_batch/test5_gl.txt
+python3 spkmeans.py gl tests/test_batch/test6.txt > tests/ans_batch/test6_gl.txt
+python3 spkmeans.py gl tests/test_batch/test7.txt > tests/ans_batch/test7_gl.txt
+python3 spkmeans.py gl tests/test_batch/test8.txt > tests/ans_batch/test8_gl.txt
+python3 spkmeans.py gl tests/test_batch/test9.txt > tests/ans_batch/test9_gl.txt
+python3 spkmeans.py gl tests/test_batch/test10.txt > tests/ans_batch/test10_gl.txt
+
+python3 spkmeans.py jacobi tests/test_batch/test1_j.txt > tests/ans_batch/test1_j_ans.txt
+python3 spkmeans.py jacobi tests/test_batch/test2_j.txt > tests/ans_batch/test2_j_ans.txt
+python3 spkmeans.py jacobi tests/test_batch/test3_j.txt > tests/ans_batch/test3_j_ans.txt
+python3 spkmeans.py jacobi tests/test_batch/test4_j.txt > tests/ans_batch/test4_j_ans.txt
+python3 spkmeans.py jacobi tests/test_batch/test5_j.txt > tests/ans_batch/test5_j_ans.txt
+python3 spkmeans.py jacobi tests/test_batch/test6_j.txt > tests/ans_batch/test6_j_ans.txt
+python3 spkmeans.py jacobi tests/test_batch/test7_j.txt > tests/ans_batch/test7_j_ans.txt
+python3 spkmeans.py jacobi tests/test_batch/test8_j.txt > tests/ans_batch/test8_j_ans.txt
+python3 spkmeans.py jacobi tests/test_batch/test9_j.txt > tests/ans_batch/test9_j_ans.txt
+python3 spkmeans.py jacobi tests/test_batch/test10_j.txt > tests/ans_batch/test10_j_ans.txt
