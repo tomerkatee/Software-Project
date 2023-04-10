@@ -56,9 +56,7 @@ Matrix wam_ddg_gl(Datapoint datapoints[], int ddg_gl)
             if (i == j)
                 W[i][j] = diag;
             else
-                 W[i][j] = ddg_gl ? (ddg_gl==1 ? 0 : -W[i][j]) : exp(-(sq_distance(datapoints[i], datapoints[j]) / 2));
-            if(fabs(W[i][j]) < EPS)
-                W[i][j] = 0;            
+                 W[i][j] = ddg_gl ? (ddg_gl==1 ? 0 : -W[i][j]) : exp(-(sq_distance(datapoints[i], datapoints[j]) / 2)); 
         }
     }
     return W;
@@ -101,7 +99,7 @@ void free_matrix(Matrix M)
     free(M);
 }
 
-Matrix matMultiplication(Matrix A, Matrix B)
+Matrix mat_multiplication(Matrix A, Matrix B)
 {
     Matrix C;
     int i, j, k; 

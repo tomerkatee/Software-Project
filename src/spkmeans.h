@@ -125,7 +125,7 @@ double euclidian_distance(Datapoint dp1, Datapoint dp2);
  * @param B a matrix
  * @return A * B
 */
-Matrix matMultiplication(Matrix A, Matrix B);
+Matrix mat_multiplication(Matrix A, Matrix B);
 
 /**
  * Prints a matrix's rows. The values of each row are separated by commas

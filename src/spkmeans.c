@@ -74,6 +74,7 @@ Datapoint* read_datapoints(char* file_name)
     return datapoints;
 }
 
+
 int main(int argc, char* argv[]){
     Matrix m;
     Diagonalization diagonlization;

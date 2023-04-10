@@ -5,7 +5,7 @@
 
 int piv_i, piv_j; /* index of the current pivot */
 
-Matrix rotationMatrix(int i, int j, double c, double s)
+Matrix rotation_matrix(int i, int j, double c, double s)
 {
     int a, b;
     Matrix mat = squareMatrix();
@@ -103,7 +103,7 @@ void transform(Matrix A, Diagonalization* diag)
     t = obtain_t(A);
     c = 1 / root_operation(t);
     s = t * c;
-    diag->eigenvectors = matMultiplication(diag->eigenvectors, rotationMatrix(piv_i, piv_j, c, s));
+    diag->eigenvectors = mat_multiplication(diag->eigenvectors, rotation_matrix(piv_i, piv_j, c, s));
 
     for(r = 0; r < N; r++)
     {   
@@ -128,12 +128,32 @@ void transform(Matrix A, Diagonalization* diag)
     free(row_j);
 }
 
+void fix_minus_zero(Diagonalization *diag)
+{
+    Datapoint eigenvector;
+    double eigenvalue;
+    int i, j;
+    for (i = 0; i < N; i++)
+    {
+        eigenvalue = diag->eigenvalues[i];
+        if(eigenvalue < 0 && -eigenvalue < EPS)
+        {
+            diag->eigenvalues[i] = -diag->eigenvalues[i];
+            eigenvector = diag->eigenvectors[i];
+            for (j = 0; j < N; j++)
+            {
+                eigenvector[j] *= -1;
+            }
+        }
+    }
+}
+
 Diagonalization jacobi(Matrix A)
 {
     double prev_off, cur_off = 0;
     int iter_count = 0;
     Diagonalization diag;
-    diag.eigenvectors = rotationMatrix(0, 1, 1, 0);
+    diag.eigenvectors = rotation_matrix(0, 1, 1, 0);
     assert(N > 1);
 
     while (true)
@@ -141,8 +161,9 @@ Diagonalization jacobi(Matrix A)
         prev_off = cur_off;
         transform(A, &diag);
         cur_off = off_squared(A);
-        if((iter_count++ >= ITER) || (fabs(prev_off - cur_off) <= EPS)){ break; }
+        if((++iter_count >= ITER) || (fabs(prev_off - cur_off) <= EPS)){ break; }
     }
     diag.eigenvalues = diagonal(A);
+    fix_minus_zero(&diag);
     return diag;
 }
