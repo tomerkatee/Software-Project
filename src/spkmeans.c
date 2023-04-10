@@ -53,7 +53,7 @@ Datapoint* read_datapoints(char* file_name)
     char* line;
     size_t len = 64;
     Datapoint* datapoints;
-    int i = 1;
+    int i = 1, ignore;
 
     file = fopen(file_name, "r");
     N = count_lines(file);
@@ -61,7 +61,8 @@ Datapoint* read_datapoints(char* file_name)
     fseek(file, 0, SEEK_SET);
     line = (char*)calloc_and_check(len, sizeof(char));
     datapoints = (Datapoint*)calloc_and_check(N, sizeof(Datapoint));
-    getline(&line, &len, file);
+    ignore=getline(&line, &len, file);
+    ignore=ignore;
     dp_size = get_dp_len(line);
     datapoints[0] = read_line_to_vector(line);
     while(getline(&line, &len, file) != -1)
