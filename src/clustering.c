@@ -160,7 +160,7 @@ Cluster** kmeans_clustering(DPNode *datapoints[], long initial_centroids[])
         for(i = 0; i < K; ++i) { update_cluster(clusters[i]); }
         
         /* check for convergence */
-        if((iteration_number++ >= KMEANS_ITER) || convergence(clusters)){ break; }
+        if((++iteration_number >= KMEANS_ITER) || convergence(clusters)){ break; }
     }
 
     return clusters;
