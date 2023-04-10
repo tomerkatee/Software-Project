@@ -15,6 +15,8 @@
 #define true 1
 #define false 0
 
+#define KMEANS_ITER 300
+#define KMEANS_EPS 0
 #define ITER 100
 #define EPS 0.00001
 
