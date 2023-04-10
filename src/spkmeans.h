@@ -16,7 +16,7 @@
 #define false 0
 
 #define ITER 100
-#define EPS 0.00005
+#define EPS 0.00001
 
 /* globals */
 extern int N;          /* number of datapoints */
